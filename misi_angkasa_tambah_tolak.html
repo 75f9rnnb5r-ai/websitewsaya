@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misi Angkasa - Matematik Tahun 1</title>
+<style>
+:root{--navy:#101638;--purple:#8065d8;--pink:#ff83bd;--gold:#ffd76a;--ink:#222747}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 20% 10%,#4d4b9d 0,#20275b 36%,#101638 78%);min-height:100vh;padding:20px}
+.wrap{max-width:900px;margin:auto}.hero{text-align:center;color:white;padding:18px 10px}.hero .rocket{font-size:48px}.hero h1{margin:6px 0;font-size:clamp(28px,6vw,46px);letter-spacing:1px}.hero p{margin:6px;color:#dcdcff}
+.panel{background:#fff;border-radius:24px;padding:clamp(18px,4vw,30px);box-shadow:0 16px 40px #080d2b88;margin:12px 0}
+.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}.pill{background:#f0ebff;color:#6546b8;border-radius:30px;padding:9px 14px;font-weight:bold;font-size:14px}
+.track{height:12px;background:#eeeaf8;border-radius:20px;overflow:hidden;margin:16px 0 22px}.bar{height:100%;width:0;background:linear-gradient(90deg,#8065d8,#ff83bd);transition:width .3s}
+.leveltitle{text-align:center;color:#6c54c4;margin:0 0 5px;font-size:18px}.question{text-align:center;font-size:clamp(34px,8vw,56px);font-weight:800;margin:10px 0 18px;color:#20264d}
+.mission{background:linear-gradient(135deg,#f1edff,#fff1f8);border-radius:18px;padding:18px;text-align:center}
+.mission small{display:block;color:#7865b3;font-weight:bold;letter-spacing:1px}.mission strong{font-size:21px}
+.hint{color:#65647b;font-size:14px;margin-top:9px}
+.manip{margin:20px 0;padding:16px;border:2px dashed #d6c9f5;border-radius:18px;text-align:center;background:#fcfbff}
+.manip h3{margin:0 0 12px;font-size:16px;color:#6a55b5}
+.counters{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;min-height:44px;align-items:center}
+.counter{width:32px;height:32px;border-radius:50%;background:#ff7a9e;border:3px solid #d94c78;box-shadow:inset -3px -3px #0001}
+.counter.blue{background:#66b7ff;border-color:#3487d1}.counter.green{background:#63d5a2;border-color:#2ca779}.counter.removed{opacity:.22;filter:grayscale(1);text-decoration:line-through}
+.controls{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+button{border:0;border-radius:14px;padding:13px 18px;font-size:16px;font-weight:bold;cursor:pointer;transition:.15s}
+button:active{transform:scale(.97)}button:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:#7258ca;color:white}.secondary{background:#eee9ff;color:#5944a3}.choice{background:#f3f1fb;color:#302b55;border:2px solid #e3def3;min-width:90px;font-size:23px}.choice.selected{border-color:#8065d8;background:#eee8ff}
+.feedback{min-height:28px;text-align:center;font-weight:bold;margin:14px 0 4px}.good{color:#16845c}.bad{color:#c04464}
+.levels{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:18px}.leveldot{padding:10px 4px;text-align:center;border-radius:12px;background:#f0eef7;color:#777;font-weight:bold;font-size:13px}.leveldot.done{background:#e2f7ee;color:#16845c}.leveldot.now{background:#e9e1ff;color:#6546b8;border:2px solid #8065d8}
+.footer{text-align:center;color:#d7d8f5;font-size:12px;padding:14px}
+.hidden{display:none}.final{text-align:center;padding:25px 10px}.final .trophy{font-size:70px}.final h2{color:#6546b8;font-size:32px}
+@media(max-width:520px){body{padding:10px}.panel{border-radius:18px}.levels{grid-template-columns:repeat(5,1fr)}button{padding:12px 14px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <header class="hero"><div class="rocket">🚀 🌙 ⭐</div><h1>MISI ANGKASA</h1><p>CABARAN TAMBAH &amp; TOLAK · MATEMATIK TAHUN 1</p></header>
+ <main class="panel" id="game">
+  <div class="top"><span class="pill" id="levelPill">LEVEL 1 / 10</span><span class="pill">⭐ Markah: <b id="score">0</b> / 10</span></div>
+  <div class="track"><div class="bar" id="progress"></div></div>
+  <h2 class="leveltitle" id="planet">PLANET MERAH</h2>
+  <div class="question" id="question">2 + 1 = ?</div>
+  <div class="mission"><small>ARAHAN MISI</small><strong id="mission">Gabungkan 2 objek dengan 1 objek lagi.</strong><div class="hint" id="hint">Kira semua objek untuk mencari jumlah.</div></div>
+  <section class="manip">
+   <h3>🧩 RUANG MANIPULATIF DIGITAL</h3>
+   <div class="counters" id="counters"></div>
+   <div class="controls"><button class="secondary" id="showBtn">Tunjuk objek</button><button class="secondary" id="resetBtn">Susun semula</button></div>
+   <p class="hint">Tekan “Tunjuk objek” untuk memaparkan pembilang. Jika butang tidak bertindak, buka fail ini menggunakan Safari atau Chrome, bukan pratonton dalam aplikasi Files.</p>
+  </section>
+  <div class="controls" id="choices"></div>
+  <div class="feedback" id="feedback" aria-live="polite"></div>
+  <div class="controls"><button class="primary" id="checkBtn">Semak jawapan</button><button class="primary hidden" id="nextBtn">Level seterusnya →</button></div>
+  <div class="levels" id="levels"></div>
+ </main>
+ <section class="panel final hidden" id="finish"><div class="trophy">🏆🚀</div><h2>MISI SELESAI!</h2><p id="finalScore"></p><p>Syabas! Awak telah menyelesaikan 10 cabaran operasi tambah dan tolak.</p><button class="primary" id="replay">Main semula</button></section>
+ <div class="footer">Permainan pembelajaran Matematik Tahun 1 · Misi Angkasa</div>
+</div>
+<script>
+const data=[
+ {planet:"PLANET MERAH",q:"2 + 1",a:3,opts:[2,3,4],op:"tambah",n:2,m:1,mission:"Gabungkan 2 objek dengan 1 objek lagi.",hint:"Tambah bermaksud menggabungkan kumpulan."},
+ {planet:"PLANET BIRU",q:"3 + 2",a:5,opts:[4,5,6],op:"tambah",n:3,m:2,mission:"Gabungkan 3 objek dengan 2 objek lagi.",hint:"Kira semua objek selepas digabungkan."},
+ {planet:"PLANET HIJAU",q:"5 + 3",a:8,opts:[7,8,9],op:"tambah",n:5,m:3,mission:"Ada 5 objek. Tambahkan 3 objek lagi.",hint:"Boleh kira satu demi satu atau mula dari 5."},
+ {planet:"PLANET KUNING",q:"7 + 2",a:9,opts:[8,9,10],op:"tambah",n:7,m:2,mission:"Mula pada 7 dan bergerak 2 langkah ke hadapan.",hint:"7 → 8 → 9."},
+ {planet:"PLANET UNGU",q:"8 − 3",a:5,opts:[4,5,6],op:"tolak",n:8,m:3,mission:"Mulakan dengan 8 objek dan keluarkan 3.",hint:"Tolak bermaksud mengurangkan bilangan objek."},
+ {planet:"PLANET OREN",q:"9 − 4",a:5,opts:[4,5,6],op:"tolak",n:9,m:4,mission:"Mula pada 9 dan bergerak 4 langkah ke belakang.",hint:"9 → 8 → 7 → 6 → 5."},
+ {planet:"PLANET PERAK",q:"10 − 6",a:4,opts:[3,4,5],op:"tolak",n:10,m:6,mission:"Keluarkan 6 objek daripada 10 objek.",hint:"Kira objek yang masih tinggal."},
+ {planet:"PLANET EMAS",q:"6 + 5",a:11,opts:[10,11,12],op:"tambah",n:6,m:5,mission:"Gabungkan 6 objek dengan 5 objek lagi.",hint:"Kumpulkan semua objek dan kira jumlahnya."},
+ {planet:"PLANET KRISTAL",q:"12 − 5",a:7,opts:[6,7,8],op:"tolak",n:12,m:5,mission:"Mulakan dengan 12 objek dan keluarkan 5.",hint:"Kira baki selepas 5 objek dikeluarkan."},
+ {planet:"PLANET TERAKHIR",q:"9 + 6 − 4",a:11,opts:[10,11,12],op:"campuran",n:9,m:6,mission:"Selesaikan tambah dahulu, kemudian tolak 4.",hint:"9 + 6 = 15, kemudian 15 − 4."}
+];
+let idx=0,score=0,selected=null,locked=false,shown=false;
+const $=id=>document.getElementById(id);
+function render(){
+ const d=data[idx];selected=null;locked=false;shown=false;
+ $("levelPill").textContent=`LEVEL ${idx+1} / 10`;$("score").textContent=score;
+ $("progress").style.width=(idx/10*100)+"%";$("planet").textContent=d.planet;
+ $("question").textContent=d.q+" = ?";$("mission").textContent=d.mission;$("hint").textContent=d.hint;
+ $("feedback").textContent="";$("feedback").className="feedback";
+ $("checkBtn").classList.remove("hidden");$("nextBtn").classList.add("hidden");
+ $("choices").innerHTML="";
+ d.opts.forEach(v=>{let b=document.createElement("button");b.className="choice";b.textContent=v;b.onclick=()=>{if(locked)return;selected=v;[...$("choices").children].forEach(x=>x.classList.remove("selected"));b.classList.add("selected")};$("choices").appendChild(b)});
+ renderCounters();renderLevels();
+}
+function renderCounters(){
+ const d=data[idx];
+ $("counters").innerHTML="";
+ if(!shown){
+   const msg=document.createElement("span");
+   msg.className="hint";
+   msg.textContent="Tekan “Tunjuk objek” untuk melihat pembilang.";
+   $("counters").appendChild(msg);
+   return;
+ }
+ let count=d.op==="campuran"?15:(d.op==="tambah"?d.n+d.m:d.n);
+ for(let i=0;i<count;i++){
+   let c=document.createElement("span");
+   c.className="counter"+(i>=d.n?" blue":"");
+   if(d.op==="tolak" && i>=d.a)c.classList.add("removed");
+   if(d.op==="campuran" && i>=11)c.classList.add("removed");
+   if(d.op==="campuran" && i>=9 && i<15)c.classList.add("blue");
+   $("counters").appendChild(c);
+ }
+ if(d.op==="tambah"){
+   $("hint").textContent=`${d.n} objek merah + ${d.m} objek biru = ${d.a} objek semuanya.`;
+ } else if(d.op==="tolak"){
+   $("hint").textContent=`${d.n} objek asal − ${d.m} objek dikeluarkan = ${d.a} objek berbaki.`;
+ } else {
+   $("hint").textContent="Langkah 1: 9 + 6 = 15. Langkah 2: 15 − 4 = 11. Objek kelabu ialah 4 objek yang dikeluarkan.";
+ }
+}
+function renderLevels(){ $("levels").innerHTML="";data.forEach((d,i)=>{let s=document.createElement("div");s.className="leveldot"+(i<idx?" done":i===idx?" now":"");s.textContent=i<idx?"✓ "+(i+1):"⭐ "+(i+1);$("levels").appendChild(s)})}
+$("showBtn").addEventListener("click",()=>{shown=true;renderCounters();$("showBtn").textContent="Objek dipaparkan ✓";});
+$("resetBtn").addEventListener("click",()=>{shown=false;renderCounters();$("showBtn").textContent="Tunjuk objek";});
+$("checkBtn").onclick=()=>{if(selected===null){$("feedback").textContent="Pilih satu jawapan dahulu.";return}locked=true;if(selected===data[idx].a){score++;$("score").textContent=score;$("feedback").textContent="Betul! Syabas, angkasawan! ⭐";$("feedback").className="feedback good";$("checkBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden")}else{$("feedback").textContent="Belum tepat. Tekan Susun semula atau Tunjuk objek dan cuba lagi.";$("feedback").className="feedback bad";locked=false}};
+$("nextBtn").onclick=()=>{if(idx<9){idx++;render()}else{$("game").classList.add("hidden");$("finish").classList.remove("hidden");$("finalScore").textContent=`Markah awak: ${score} daripada 10 bintang.`;$("progress").style.width="100%"}};
+$("replay").onclick=()=>{idx=0;score=0;$("finish").classList.add("hidden");$("game").classList.remove("hidden");render()};
+render();
+</script>
+</body>
+</html>
